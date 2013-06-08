@@ -1,0 +1,74 @@
+# this is an example of the GeoJSON to be displayed on google maps 
+# 
+# each Feature must have a beamid property identifying the satellite it belongs to
+# polygon Features must also have a contourid property
+# contourid is an integer which describes a signal strength (1 is highest strength)
+#
+# for each satellite there can be one "Point" object defining the centre of the beam and multiple Polygons describing a signal strength contour
+
+# example with 2 satellites and 2 signal contours per satellite (note the coordinates are not realistic) 
+{ 
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature",
+      "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
+      "properties": { "beamid": "AMES1_1"}
+    },
+    { "type": "Feature",
+       "geometry": {
+         "type": "Polygon",
+         "coordinates": [
+           [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
+             [100.0, 1.0], [100.0, 0.0] ]
+           ]
+       },
+       "properties": {
+         "beamid": "AMES1_1",
+         "contourid": 1
+       }
+    },
+    { "type": "Feature",
+       "geometry": {
+         "type": "Polygon",
+         "coordinates": [
+           [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
+             [100.0, 1.0], [100.0, 0.0] ]
+           ]
+       },
+       "properties": {
+         "beamid": "AMES1_1",
+         "contourid": 2
+         }
+     },
+    { "type": "Feature",
+      "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
+      "properties": { "beamid": "EMEA1_1"}
+    },
+    { "type": "Feature",
+       "geometry": {
+         "type": "Polygon",
+         "coordinates": [
+           [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
+             [100.0, 1.0], [100.0, 0.0] ]
+           ]
+       },
+       "properties": {
+         "beamid": "EMEA1_1",
+         "contourid": 1
+         }
+    },
+    { "type": "Feature",
+       "geometry": {
+         "type": "Polygon",
+         "coordinates": [
+           [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
+             [100.0, 1.0], [100.0, 0.0] ]
+           ]
+       },
+       "properties": {
+         "beamid": "EMEA1_1",
+         "contourid": 2
+         }
+     }
+  ]
+}
