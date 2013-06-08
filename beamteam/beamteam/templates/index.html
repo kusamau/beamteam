@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="{{STATIC_URL}}/css/jquery-ui-timepicker-addon.css" />
+    <link rel="stylesheet" href="{{STATIC_URL}}/css/beamteam.css" />
+    <style>
+      html, body, #map-canvas {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script src="{{STATIC_URL}}/js/jquery-ui-timepicker-addon.js"></script>
+    <script src="{{STATIC_URL}}/js/beamteam.js"></script>
+    <script src="{{STATIC_URL}}/js/GeoJSON.js"></script>
+  </head>
+  <body onload="boot()">
+    <h1>beam-team</h1>
+    <div id="leftpanel" style="display:inline-block;vertical-align:top;">
+        <fieldset>
+            <legend>Select lat/lon/date/time</legend>
+            lat:<input type="text" id="lat"></input>
+            <br/>lon:<input type="text" id="lon"></input>
+            <br/>date:<input type="text" id="dt"></input>
+            <br/>time:<input type="text" id="tm"></input>
+            </br><button id="go">go</button>
+        </fieldset>
+    </div>
+    <div id="map-canvas" style="width:400px;height:400px;display:inline-block;">&nbsp;</div>
+    <div id="leftpanel" style="width:200px;height:400px;;display:inline-block;">Controls2</div>
+  </body>
+</html>
+

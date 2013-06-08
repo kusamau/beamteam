@@ -16,8 +16,8 @@ urlpatterns = patterns("",
     # few patterns you can use to set it up.
 )
 
-'''
+
 urlpatterns += patterns('beamteam.views.process',
     (r'^beam$', 'process_beam'),
 )
-'''
+

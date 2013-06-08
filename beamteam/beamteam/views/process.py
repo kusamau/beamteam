@@ -32,7 +32,7 @@ Created on 28 May 2013
 '''
 from beamteam.ds_registration_helper import mm_render_to_response
 
-def process(request):
+def process_beam(request):
     context = {}
     return mm_render_to_response(request, 
                                  context, 

@@ -68,11 +68,11 @@ STATIC_ROOT = ''
 STATIC_URL = '/static/'
 
 # Additional locations of static files
-STATICFILES_DIRS = (
+# STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-)
+# )
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -112,6 +112,7 @@ import os
 # Full filesystem path to the project.
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, "templates"),)
+STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "static"),)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
