@@ -2,7 +2,6 @@ var map;
 var centermarker = null;
 
 
-
 function initialize() {
   var mapOptions = {
     zoom: 8,
@@ -16,6 +15,8 @@ function initialize() {
 google.maps.event.addDomListener(window, 'load', initialize);
 
 function consume(data) { 
+
+    /* render geojson to google maps */
 
     var geojson = JSON.parse(data);
 
@@ -33,6 +34,9 @@ function consume(data) {
 function boot() {
 
     document.getElementById("go").onclick = function(ev) {
+
+        /* called when the user clicks on the go button */
+
         var lat = parseFloat(document.getElementById("lat").value);
 
         if (isNaN(lat) || lat < -90.0 || lat > 90.0 || lat == undefined || lat == null) {
