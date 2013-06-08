@@ -25,8 +25,7 @@ def day_trajectory(path, date='2013/06/08 00:00:00', points=24, lat=51.5, lon=1.
         obs.date = ephem.Date(date + t)
         sat.compute(obs)
         sat_xyz = pyproj.transform(source, target, x=sat.sublong * 180. / ephem.pi, y=sat.sublat * 180. / ephem.pi, z=sat.elevation)
-        print sat.alt, sat.az, sat.range, sat.sublat, sat.sublong, obs.date.datetime() 
-        print sat_xyz, map(lambda x,y: x-y, sat_xyz, obs_xyz)
+
     return sat
 
 
@@ -35,7 +34,6 @@ constellation = {
     'EMEA': 'INMARSAT-4-F2.tle',
 #    'ASIP': 'INMARSAT-4-F1.tle',
 }
-
 
 def best_beams(coordinates):
 
@@ -64,8 +62,6 @@ def do_best_beams(values):
 
         obs_xyz = pyproj.transform(source, target, x=obs.lon * 180. / ephem.pi, y=obs.lat * 180. / ephem.pi, z=obs.elevation)
 
-        print obs_xyz
-
         bbs = []
         best = -100000000
 
@@ -78,9 +74,6 @@ def do_best_beams(values):
 
             sat.compute(obs)
             sat_xyz = pyproj.transform(source, target, x=sat.sublong * 180. / ephem.pi, y=sat.sublat * 180. / ephem.pi, z=sat.elevation)
-            
-            print sat.alt, sat.az, sat.range, sat.sublat, sat.sublong, obs.date.datetime()
-            print sat_xyz, map(lambda x,y: x-y, sat_xyz, obs_xyz)
 
             sat_best_beams = closest_beams(float(lat), float(lon), sat_beams, max_beams)
             #1.66e9 is the satellite frequency in Hertz
@@ -94,17 +87,18 @@ def do_best_beams(values):
                 best = bb[6]
                 bbs.append((float(lat), float(lon), date.datetime().isoformat(), bb, sat.alt))
 
-            print "Best match is " + bb[5] + " - Beam: " + str(bb[1]) + " - Point: " + str(bb[2])
-            print "Arc distance from beam point is " + str(round(bb[0]/1000, 3)) + " km"
-            print "Elevation is " + str(round(sat.alt, 2)) + " degrees"
-            print "Attenuation is " + str(round(bb[6], 2)) + " dB"
-            print "Signal power efficiency is " + str(round(bb[7]*100, 2)) + "% of power at beam center"
-
-        bests.append(bbs[-1])
+            #print "Best match is " + bb[5] + " - Beam: " + str(bb[1]) + " - Point: " + str(bb[2])
+            #print "Arc distance from beam point is " + str(round(bb[0]/1000, 3)) + " km"
+            #print "Elevation is " + str(round(sat.alt, 2)) + " degrees"
+            #print "Attenuation is " + str(round(bb[6], 2)) + " dB"
+            #print "Signal power efficiency is " + str(round(bb[7]*100, 2)) + "% of power at beam center"
+		
+		if len(bbs) == 0:
+			print "No available satellite found"
+		else:
+			bests.append(bbs[-1])
 
     return bests
-
-
 
 if __name__ == '__main__':
     best_beams('lat,lon,dat\n51,1,2013/06/08 04:00:00')
