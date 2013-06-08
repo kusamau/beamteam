@@ -21,3 +21,6 @@ urlpatterns += patterns('beamteam.views.process',
     (r'^beam$', 'process_beam'),
 )
 
+urlpatterns += patterns('beamteam.views.data',
+    (r'^data$', 'process'),
+)
