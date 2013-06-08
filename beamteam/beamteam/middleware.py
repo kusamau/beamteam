@@ -34,21 +34,8 @@ import logging
 from django.contrib.messages.api import get_messages
 
 from django.contrib import messages
-from beamteam.ds_registration_helper import mm_render_to_response
 
-formatter = logging.Formatter(fmt='%(name)s %(levelname)s %(asctime)s %(module)s %(message)s')
-handler = logging.StreamHandler()
-handler.setFormatter(formatter)
-handler.setLevel(logging.DEBUG)
-logging.getLogger().addHandler(handler)
-
-#Temporary solution!!!
-loggers = ('beamteam',)
-for log_name in loggers:
-    log = logging.getLogger(log_name)
-    log.addHandler(handler)
-    log.setLevel(logging.DEBUG)
-
+import logging
 LOGGER = logging.getLogger(__name__)
 
 class BTMiddleware(object):   

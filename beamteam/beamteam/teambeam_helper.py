@@ -34,9 +34,12 @@ from django.core.context_processors import csrf
 from django.shortcuts import render
 import urllib2
 from urllib2 import HTTPError
-from beamteam.exception import BTException
+from beamteam.exception import BTException, NotExistingTLE
 from django.template.context import RequestContext
 from django.conf import settings
+
+import logging
+LOGGER = logging.getLogger(__name__)
 
 def mm_render_to_response(request, context, page_to_render, status = 200):
     """
@@ -74,3 +77,23 @@ def read_from_url(url):
         return urllib2.urlopen(url).read()
     except HTTPError as e:
         raise BTException(e)
+    
+def load_tle(satname, url='http://www.celestrak.com/NORAD/elements/geo.txt'):
+    """
+        Download a satellite TLE.
+        The function loads a standard a TLE file, like in the one pointed
+        as default from the 'url' parameter and, if exists extract the three lines.
+        A NotExistingTLE is raised is not TLE is found
+        
+        **satname** the name of the satellite a defined in the first TLE line
+        **url** the URL of the file containing the TLE
+    """
+    tles = urllib2.urlopen(url).read()    
+    splits = [x.strip() for x in tles.split("\n")]    
+    index = splits.index(satname)
+    if index:
+        ret = splits[index] + "\n"
+        ret += splits[index + 1] + "\n"
+        ret += splits[index + 2]
+        return ret    
+    raise NotExistingTLE("No satellite named %s found into %s" % (satname, url))
