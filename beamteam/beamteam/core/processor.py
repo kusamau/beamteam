@@ -1,4 +1,5 @@
-
+import sys
+sys.path.append(".")
 import ephem
 import pyproj
 
@@ -37,13 +38,17 @@ constellation = {
 
 
 def best_beams(coordinates):
+
+    values = [line.split(',') for line in coordinates.split('\n')]
+    values.pop(0)
+
+    return do_best_beams(values)
+
+def do_best_beams(values):
     bests = []
     
     source = pyproj.Proj(init='epsg:4326')
     target = pyproj.Proj(proj='geocent')
-
-    values = [line.split(',') for line in coordinates.split('\n')]
-    values.pop(0)
 
     for vs in values:
         lat, lon = vs[:2]
@@ -102,4 +107,4 @@ def best_beams(coordinates):
 
 
 if __name__ == '__main__':
-    day_trajectory('INMARSAT-4-F2.tle')
+    best_beams('lat,lon,dat\n51,1,2013/06/08 04:00:00')
