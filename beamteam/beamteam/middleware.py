@@ -54,12 +54,14 @@ LOGGER = logging.getLogger(__name__)
 class BTMiddleware(object):   
     
     def process_response(self, request, response):
+        """
         if response.status_code in [400, 401, 403, 404, 500]:
             LOGGER.warn("Generating a %s.html page" % response.status_code)            
             self._adds_default_error_messages(request, response)
             return mm_render_to_response(request, {}, 
                         "errors/%s.html" % response.status_code, 
                         status=response.status_code)
+        """
         return response   
 
 
