@@ -1,6 +1,8 @@
 var map;
 var centermarker = null;
 
+
+
 function initialize() {
   var mapOptions = {
     zoom: 8,
@@ -14,6 +16,7 @@ function initialize() {
 google.maps.event.addDomListener(window, 'load', initialize);
 
 function consume(data) { 
+
     var geojson = JSON.parse(data);
 
     var googleOptions = {
@@ -28,6 +31,7 @@ function consume(data) {
 }
 
 function boot() {
+
     document.getElementById("go").onclick = function(ev) {
         var lat = parseFloat(document.getElementById("lat").value);
 
@@ -40,6 +44,19 @@ function boot() {
 
         if (isNaN(lon) || lon < -180.0 || lon > 180.0 || lon == undefined || lon == null) {
             alert("Invalid value for longitude");
+            return;
+        }
+
+        var dt = document.getElementById("dt").value;
+        var tm = document.getElementById("tm").value;
+
+        if (!dt) {
+            alert("Invalid value for date");
+            return;
+        }
+
+        if (!tm) {
+            alert("Invalid value for time");
             return;
         }
 
@@ -56,8 +73,10 @@ function boot() {
             centermarker.setPosition(latlon);
         }
 
-        $.ajax({"url":"http://localhost:8080/geojson.json"})
-            .done( consume )
+        var url = "getgeojson?lat="+String(lat)+"&lon="+String(lon)+"&date="+dt+"&time="+tm;  
+        alert("calling url:"+url);
+        $.ajax({"url":url})
+            .done( function(data) { alert("success:"+String(data)); })
             .fail( function() { alert("failed"); });  
     }
     $( "#lat" ).spinner( { "max":90.0, "min":-90.0 } );
