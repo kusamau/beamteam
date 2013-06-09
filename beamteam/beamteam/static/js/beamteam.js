@@ -47,7 +47,8 @@ function centerMap(lat,lon) {
         centermarker = new google.maps.Marker({
             position: latlon, 
             map: map,
-            title:"Consumer Location"
+            title:"Consumer Location",
+            icon: "static/img/person_icon.png"
         });
     } else {
         centermarker.setPosition(latlon);
@@ -61,7 +62,8 @@ function satellitePosition(lat,lon,beamid) {
         satmarker = new google.maps.Marker({
             position: latlon, 
             map: map,
-            title:"Satellite Location:"+beamid
+            title:"Satellite Location:"+beamid,
+            icon: "static/img/beam_icon.png"
         });
     } else {
         satmarker.setPosition(latlon);

@@ -1,12 +1,13 @@
 body {
     font-family: Helvetica, sans-serif;
+    margin-left: 20px;
+    overflow: scroll;
 }	
 
 
 table { 
 	border:2px solid;
 	border-color: #808080;
-	margin-left:10px;
 	margin-bottom:20px;
 	table-layout: auto;
 	border-collapse: collapse;
