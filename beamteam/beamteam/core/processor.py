@@ -1,13 +1,14 @@
 '''
 Created on 9 Jun 2013
 
-@author: Simone Sturnioli
+@author: Alessandro Amici and Simone Sturniolo
 '''
 import sys
 import urllib2
 sys.path.append(".")
 import ephem
 import pyproj
+from datetime import datetime
 
 from beamteam.core.power_calc import *
 
@@ -56,7 +57,9 @@ def do_best_beams(values, beamsfile, return_all = False):
      
     source = pyproj.Proj(init='epsg:4326')
     target = pyproj.Proj(proj='geocent')
- 
+    
+    f_lines = beamsfile.readlines()
+
     for vs in values:
         lat, lon = vs[:2]
         try:
@@ -73,8 +76,6 @@ def do_best_beams(values, beamsfile, return_all = False):
  
         bbs = []
         best = None
-
-        f_lines = beamsfile.readlines()
 
         for label, tlepath in constellation.items():
             sat_beams = parse_beam_data(f_lines, label)
@@ -106,7 +107,7 @@ def do_best_beams(values, beamsfile, return_all = False):
             #print "Elevation is " + str(round(sat.alt, 2)) + " degrees"
             #print "Attenuation is " + str(round(bb[6], 2)) + " dB"
             #print "Signal power efficiency is " + str(round(bb[7]*100, 2)) + "% of power at beam center"
-
+            
         if len(bbs) == 0:
             print "No available satellite found"
         else:
@@ -116,7 +117,10 @@ def do_best_beams(values, beamsfile, return_all = False):
                 bests.append(bbs[-1])
 
     return bests
- 
+
+
+cache = {}
+
 def load_tle(satname, url='http://www.celestrak.com/NORAD/elements/geo.txt'):
     """
         Download a satellite TLE.
@@ -127,14 +131,17 @@ def load_tle(satname, url='http://www.celestrak.com/NORAD/elements/geo.txt'):
         **satname** the name of the satellite a defined in the first TLE line
         **url** the URL of the file containing the TLE
     """
-    tles = urllib2.urlopen(url).read()    
-    splits = [x.strip() for x in tles.split("\n")]    
-    index = splits.index(satname)
-    ret = None
-    if index:
-        ret = (splits[index], splits[index + 1], splits[index + 2])
-    return ret
+    if satname not in cache or (cache[satname]['date'] - datetime.now()).days >= 1:
+        tles = urllib2.urlopen(url).read()  
+        splits = [x.strip() for x in tles.split("\n")]
+        index = splits.index(satname)
+        ret = None
+        if index:
+            ret = (splits[index], splits[index + 1], splits[index + 2])
+        cache[satname] = {'tle': ret, 'date': datetime.now()}
+
+    return cache[satname]['tle']
  
 if __name__ == '__main__':
-    print best_beams('lat,lon,dat\n32.4,26.2,2013/06/08 04:00:00', open('pseudobeams.csv'))
+    print best_beams('lat,lon,dat\n32.4,26.2,2013/06/08 04:00:00\n32.7,27.2,2013/06/08 04:00:00', open('pseudobeams.csv'))
 
