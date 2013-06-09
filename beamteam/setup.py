@@ -32,5 +32,7 @@ setup(
     long_description=open('README.txt').read(),
     zip_safe=False,
     # Adds dependencies    
-    install_requires = ['django'],
+    install_requires = ['django',
+                        'pyephem',
+                        'pyproj'],
 )

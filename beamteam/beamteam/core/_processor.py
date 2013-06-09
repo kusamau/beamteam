@@ -35,10 +35,8 @@ def day_trajectory(path, date='2013/06/08 00:00:00', points=24, lat=51.5, lon=1.
  
  
 constellation = {
-    'AMER': 'INMARSAT 4-F3',
-    'EMEA': 'INMARSAT 4-F2'
-    #'AMER': 'INMARSAT-4-F3.tle',
-    #'EMEA': 'INMARSAT-4-F2.tle',
+    'AMER': 'INMARSAT-4-F3.tle',
+    'EMEA': 'INMARSAT-4-F2.tle',
 #    'ASIP': 'INMARSAT-4-F1.tle',
 }
  
@@ -72,9 +70,9 @@ def do_best_beams(values, beamsfile, return_all = False):
         bbs = []
         best = None
  
-        f_lines = beamsfile.readlines()
         for label, tlepath in constellation.items():
-            sat_beams = parse_beam_data(f_lines, label)
+            f = beamsfile
+            sat_beams = parse_beam_data(f.readlines(), label)
  
             tle = load_tle(tlepath, url='http://www.celestrak.com/NORAD/elements/geo.txt')
             #tle = open(tlepath).readlines()

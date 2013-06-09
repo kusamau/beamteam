@@ -29,7 +29,9 @@
   <!-- <body onload="boot()">  -->
 	<body>  
     <h1>beam-team</h1>
-    <form method="post" action="/data">
+    <input type="hidden" id="bestbeams" value="{{ bestbeams }}" />
+    
+    <form method="post" action="/beam">
     {% csrf_token %}
     <div id="leftpanel" style="display:inline-block;vertical-align:top;">
         <fieldset>
@@ -38,21 +40,19 @@
             <br/>lon:<input type="text" id="lon"></input>
             <br/>date:<input type="text" id="dt"></input>
             <br/>time:<input type="text" id="tm"></input>
-            </br><button id="go">go</button>
-            
+            </br><button id="go">go</button>            
         </fieldset>
         <fieldset>
         	<span class="btn btn-success fileinput-button">
         		<i class="icon-plus icon-white"></i>
         		<span>Upload File</span>
         		<!-- The file input field used as target for the file upload widget -->
-        		<input id="fileupload" type="file" name="uploadfiles" multiple>
+        		<input id="fileupload" type="file" name="uploadfiles">
         		<!-- The container for the uploaded files -->
     			<div id="files" class="files"></div>
     		</span>        
         </fieldset>
     </div>
-    <input type="submit"  name="submit" value="Submit">
     </form>
     <div id="map-canvas" style="width:400px;height:400px;display:inline-block;">&nbsp;</div>
     <div id="leftpanel" style="width:200px;height:400px;;display:inline-block;">Controls2</div>
@@ -72,16 +72,11 @@ $(function () {
     // Change this to the location of your server-side upload handler:
     var url = (window.location.hostname === 'blueimp.github.com' ||
                 window.location.hostname === 'blueimp.github.io') ?
-                '//jquery-file-upload.appspot.com/' : '/data';
+                '//jquery-file-upload.appspot.com/' : '/beam';
     $('#fileupload').fileupload({
     	type:'POST',
         url: url,
         dataType: '', 
-        done: function (e, data) {
-            $.each(data.result.files, function (index, file) {
-                $('<p/>').text(file.name).appendTo('#files');
-            });
-        },
         headers: {        	
             'X-CSRFToken': $.cookie('csrftoken')
         },

@@ -57,3 +57,12 @@ class NoLocations(BTException):
         self.value = value
     def __str__(self):
         return self.value      
+    
+class NoBestBeam(BTException):
+    """
+        Whenever a user requires an unexcpeted parameter 
+    """    
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return self.value        

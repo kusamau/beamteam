@@ -1,4 +1,5 @@
 DEBUG = True
+DEMO = True
 
 SITE_PREFIX = ""
 #SITE_PREFIX = "cedasite"
