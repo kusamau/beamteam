@@ -79,11 +79,11 @@ def convert_to_geojson(bestbeam):
     
 
     
-    ret = {}
-    ret['location'] = {"lat": beam[0], "lon": beam[1], "datetime": beam[2]}
+    ret = {}    
     ret['type'] = "FeatureCollection"
     ret['features'] = []
     feat = ret['features']
+    feat['location'] = {"lat": beam[0], "lon": beam[1], "datetime": beam[2]}
     subbeam = beam[3]
     beamid = "%s_%s_%s" % (subbeam[5], subbeam[1], subbeam[2])     
     feat.append(__satellite_feature(subbeam[3], 
