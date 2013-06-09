@@ -80,20 +80,23 @@ def convert_to_geojson(bestbeam):
 
     
     ret = {}
+    ret['location'] = {"lat": beam[0], "lon": beam[1], "datetime": beam[2]}
     ret['type'] = "FeatureCollection"
     ret['features'] = []
     feat = ret['features']
-
-    feat.append(__satellite_feature(beam[0], 
-                                   beam[1], 
-                                   beam[4]))
+    subbeam = beam[3]
+    beamid = "%s_%s_%s" % (subbeam[5], subbeam[1], subbeam[2])     
+    feat.append(__satellite_feature(subbeam[3], 
+                                   subbeam[4], 
+                                   beam[4],
+                                   beamid))
     return json.dumps(ret)
     
-def __satellite_feature(lat, lon, elevation):
+def __satellite_feature(lat, lon, elevation, beamid):
     new_feature = {}    
     new_feature['type'] = "Feature"
     new_feature['geometry'] = {'type': "Point", "coordinates": [lat, lon]}
-    new_feature['properties'] = {'elevation': elevation}    
+    new_feature['properties'] = {'elevation': elevation, 'beamid': beamid}
     return new_feature
 
 def get_customer_locations(request):
