@@ -136,5 +136,5 @@ def load_tle(satname, url='http://www.celestrak.com/NORAD/elements/geo.txt'):
     return ret
  
 if __name__ == '__main__':
-    print best_beams('lat,lon,dat\n51,1,2013/06/08 04:00:00')
+    print best_beams('lat,lon,dat\n32.4,26.2,2013/06/08 04:00:00', open('pseudobeams.csv'))
 
