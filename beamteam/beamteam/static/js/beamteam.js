@@ -1,11 +1,16 @@
 var map;
 var centermarker = null;
+var satmarker = null;
+
+var output = {};
+var output_count = 0;
+var table = null;
 
 
 function initialize() {
   var mapOptions = {
-    zoom: 8,
-    center: new google.maps.LatLng(-34.397, 150.644),
+    zoom: 2,
+    center: new google.maps.LatLng(0, 0),
     mapTypeId: google.maps.MapTypeId.SATELLITE
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
@@ -14,77 +19,92 @@ function initialize() {
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
-function consume(data) { 
-
-    /* render geojson to google maps */
-
-    var geojson = JSON.parse(data);
-
-    var googleOptions = {
-        strokeColor: "#FFFF00",
-        strokeWeight: 7,
-        strokeOpacity: 0.75
-    };
-
-    googleVector = new GeoJSON(geojson, googleOptions);
-
-    googleVector.setMap(map);
+function parseGEOJSON(data) { 
+    clearOutput();
+    var obj = JSON.parse(data);
+    var features = obj["features"];
+    for(var i=0; i<features.length; i++) {
+        var feature = features[i];
+        var geometry = feature["geometry"];
+        var properties = feature["properties"];
+        var location = feature["location"];
+        var lat = location["lat"];
+        var lon = location["lon"];
+        var dt = location["datetime"];
+        var satlat = geometry["coordinates"][0];
+        var satlon = geometry["coordinates"][1];
+        var beamid = properties["beamid"];
+        var elevation = properties["elevation"];
+        addOutput(lat,lon,dt,satlat,satlon,beamid,elevation);   
+    }
 }
 
-function boot() {
+function centerMap(lat,lon) {
+    var latlon = new google.maps.LatLng(lat,lon);
+    map.setCenter(latlon);
 
-    document.getElementById("go").onclick = function(ev) {
-
-        /* called when the user clicks on the go button */
-
-        var lat = parseFloat(document.getElementById("lat").value);
-
-        if (isNaN(lat) || lat < -90.0 || lat > 90.0 || lat == undefined || lat == null) {
-            alert("Invalid value for latitude");
-            return;
-        }
-
-        var lon = parseFloat(document.getElementById("lon").value);
-
-        if (isNaN(lon) || lon < -180.0 || lon > 180.0 || lon == undefined || lon == null) {
-            alert("Invalid value for longitude");
-            return;
-        }
-
-        var dt = document.getElementById("dt").value;
-        var tm = document.getElementById("tm").value;
-
-        if (!dt) {
-            alert("Invalid value for date");
-            return;
-        }
-
-        if (!tm) {
-            alert("Invalid value for time");
-            return;
-        }
-
-        var latlon = new google.maps.LatLng(lat,lon);
-        map.setCenter(latlon);
-
-        if (centermarker == null) {
-            centermarker = new google.maps.Marker({
-                position: latlon, 
-                map: map,
-                title:"Location"
-            });
-        } else {
-            centermarker.setPosition(latlon);
-        }
-
-        var url = "getgeojson?lat="+String(lat)+"&lon="+String(lon)+"&date="+dt+"&time="+tm;  
-        alert("calling url:"+url);
-        $.ajax({"url":url})
-            .done( function(data) { alert("success:"+String(data)); })
-            .fail( function() { alert("failed"); });  
+    if (centermarker == null) {
+        centermarker = new google.maps.Marker({
+            position: latlon, 
+            map: map,
+            title:"Consumer Location"
+        });
+    } else {
+        centermarker.setPosition(latlon);
     }
-    $( "#lat" ).spinner( { "max":90.0, "min":-90.0 } );
-    $( "#lon" ).spinner( { "max":180.0, "min":-180.0 } );
-    $( "#dt" ).datepicker();
-    $( "#tm" ).timepicker();
+}
+
+function satellitePosition(lat,lon,beamid) {
+    var latlon = new google.maps.LatLng(lat,lon);
+  
+    if (satmarker == null) {
+        satmarker = new google.maps.Marker({
+            position: latlon, 
+            map: map,
+            title:"Satellite Location:"+beamid
+        });
+    } else {
+        satmarker.setPosition(latlon);
+    }
+}
+
+function clearOutput() {
+    output = {};
+    table.innerHTML = '<tr><td>show</td><td>lat</td><td>lon</td><td>dt</td><td>satlat</td><td>satlon</td><td>beamid</td><td>elevation</td></tr>';
+}
+
+function makeTD(val) {
+    return "<td>"+val+"</td>";
+}
+
+function makeTDF(val) {
+    return "<td>"+String(parseFloat(Math.round(val * 100) / 100).toFixed(2)) + "</td>";
+}
+
+function addOutput(lat,lon,dt,satlat,satlon,beamid,elevation) {
+    var rowid = "row_"+output_count;
+    output_count += 1;
+    output[rowid] = { "beamid":beamid, "lat":lat, "lon":lon, "dt":dt, "satlat":satlat, "satlon":satlon, "elevation":elevation };
+
+    var row = document.createElement("tr");
+    rh = '<td><button id="'+rowid+'">Show</button></td>';
+    rh += makeTDF(lat);
+    rh += makeTDF(lon);
+    rh += makeTD(dt);
+    rh += makeTDF(satlat);
+    rh += makeTDF(satlon);
+    rh += makeTD(beamid);
+    rh += makeTDF(elevation);
+    row.innerHTML = rh;    
+    table.appendChild(row);
+    document.getElementById(rowid).onclick = function(ev) { 
+        var op = output[ev.target.id]; 
+        centerMap(op["lat"],op["lon"]); 
+        satellitePosition(op["satlat"],op["satlon"],op["beamid"]);
+    }
+}
+
+
+function boot() {
+    table = document.getElementById("table");
 }
