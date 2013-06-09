@@ -1,7 +1,7 @@
 import sys
 import math
+from beamteam.core.beamparser import parse_beam_data
 sys.path.append(".")
-from beamteam.core.beamparser import *
 from beamteam.core.geoparser import *
 from beamteam.core.earth_ellipsoid import *
 

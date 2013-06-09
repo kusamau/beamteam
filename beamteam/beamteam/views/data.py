@@ -30,13 +30,72 @@ Created on 28 May 2013
 
 @author: mnagni
 '''
-from beamteam.teambeam_helper import mm_render_to_response
 from django.http.response import HttpResponse
 from django.conf import settings
 import os
+from beamteam.exception import NoLocations, NoBestBeam
+from django.contrib import messages
+from beamteam.core.processor import best_beams
+from beamteam.teambeam_helper import mm_render_to_response
+import json
 
 def process(request):
-    default_geojson = os.path.join(settings.PROJECT_ROOT, 'tests', 'example.geojson')
-    ret_json = open(default_geojson, 'r')
-    return HttpResponse(ret_json.read(), mimetype='application/json')    
+    locations = None
+    if settings.DEMO:
+        #default_geojson = os.path.join(settings.PROJECT_ROOT, 'tests', 'example.geojson')
+        #locations = open(default_geojson, 'r').read()
+        locations = "12.0,10.0,2013-01-01"
+    else:
+        locations = get_customer_locations(request)
+
+    bestbeams = _get_bestbeam(request, locations)
+    bestbeams = convert_to_geojson(bestbeams)
+    context = {'bestbeams': bestbeams}
+    return mm_render_to_response(request, 
+                                 context, 
+                                 'index.html')        
+
+#return HttpResponse(ret_json.read(), mimetype='application/json')
+def _get_bestbeam(request, locations):
+    try:
+        beamsfile = open('pseudobeams.csv')
+        bestbeams = best_beams(locations, beamsfile)
+    except Exception:
+        messages.add_message(request, messages.ERROR, str("Core Exception"))
+        return HttpResponse(status=500)          
+
+
+#bbs.append((float(lat), float(lon), date.datetime().isoformat(), bb, sat.alt))
+
+def convert_to_geojson(bestbeam):
+    # The method expects a tuple like
+    # (lat, lon, datetime, ???, altitude)
     
+    if not bestbeam or len(bestbeam) != 5:
+        raise NoBestBeam("No Best beam found") 
+    
+    ret = {}
+    ret['type'] = "FeatureCollection"
+    ret['features'] = []
+    feat = ret['features']
+
+    feat.append(__satellite_feature(bestbeam[0], 
+                                   bestbeam[1], 
+                                   bestbeam[4]))
+    return json.dumps(ret)
+    
+def __satellite_feature(lat, lon, elevation):
+    new_feature = {}    
+    new_feature['type'] = "Feature"
+    new_feature['geometry'] = {'type': "Point", "coordinates": [lat, lon]}
+    new_feature['properties'] = {'elevation': elevation}    
+    return new_feature
+
+def get_customer_locations(request):
+    locations = ""
+    try:
+        if hasattr(request, '_files'):
+            return request._files['uploadfiles'].read()
+    except Exception:
+        messages.add_message(request, messages.ERROR, str("No location file"))
+        raise NoLocations(str("No location file"))    
