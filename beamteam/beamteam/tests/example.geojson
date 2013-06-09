@@ -10,9 +10,10 @@
 { 
   "type": "FeatureCollection",
   "features": [
-    { "type": "Feature",
+    { "location": {"lat": 12, "lon": 13, "datetime": "2013-06-08T03:59:59.0"}
+      "type": "Feature",
       "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
-      "properties": { "beamid": "AMES1_1"}
+      "properties": { "beamid": "AMES_16_0"}
     },
     { "type": "Feature",
        "geometry": {
