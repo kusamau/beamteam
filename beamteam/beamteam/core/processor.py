@@ -131,7 +131,7 @@ def load_tle(satname, url='http://www.celestrak.com/NORAD/elements/geo.txt'):
         **satname** the name of the satellite a defined in the first TLE line
         **url** the URL of the file containing the TLE
     """
-    if satname not in cache or (cache[satname]['date'] - datetime.now()).day >= 1:
+    if satname not in cache or (cache[satname]['date'] - datetime.now()).days >= 1:
         tles = urllib2.urlopen(url).read()  
         splits = [x.strip() for x in tles.split("\n")]
         index = splits.index(satname)
@@ -143,5 +143,5 @@ def load_tle(satname, url='http://www.celestrak.com/NORAD/elements/geo.txt'):
     return cache[satname]['tle']
  
 if __name__ == '__main__':
-    print best_beams('lat,lon,dat\n32.4,26.2,2013/06/08 04:00:00', open('pseudobeams.csv'))
+    print best_beams('lat,lon,dat\n32.4,26.2,2013/06/08 04:00:00\n32.7,27.2,2013/06/08 04:00:00', open('pseudobeams.csv'))
 
