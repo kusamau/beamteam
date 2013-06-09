@@ -1,7 +1,7 @@
 '''
 Created on 9 Jun 2013
 
-@author: Simone Sturnioli
+@author: Alessandro Amici and Simone Sturniolo
 '''
 import sys
 import urllib2
