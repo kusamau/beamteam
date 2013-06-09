@@ -47,6 +47,7 @@ max_beams = 10    # Number of closest beams we want to find as a first approxima
 def best_beams(coordinates, beamsfile):
  
     values = [line.split(',') for line in coordinates.split('\n')]
+    values.pop(0)
     return do_best_beams(values, beamsfile)
  
 def do_best_beams(values, beamsfile, return_all = False):

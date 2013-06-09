@@ -32,19 +32,18 @@ Created on 28 May 2013
 '''
 from django.http.response import HttpResponse
 from django.conf import settings
-import os
 from beamteam.exception import NoLocations, NoBestBeam
 from django.contrib import messages
 from beamteam.core.processor import best_beams
 from beamteam.teambeam_helper import mm_render_to_response
 import json
+import os
 
 def process(request):
     locations = None
     if settings.DEMO:
-        #default_geojson = os.path.join(settings.PROJECT_ROOT, 'tests', 'example.geojson')
-        #locations = open(default_geojson, 'r').read()
-        locations = "12.0,10.0,2013-01-01"
+        locations = os.path.join(settings.PROJECT_ROOT, 'tests', 'locations.txt')
+        locations = open(locations, 'r').read()
     else:
         locations = get_customer_locations(request)
 
@@ -58,8 +57,9 @@ def process(request):
 #return HttpResponse(ret_json.read(), mimetype='application/json')
 def _get_bestbeam(request, locations):
     try:
-        beamsfile = open('pseudobeams.csv')
-        bestbeams = best_beams(locations, beamsfile)
+        beams_file = os.path.join(settings.PROJECT_ROOT, 'tests', 'pseudobeams.csv')
+        beamsfile = open(beams_file)
+        return best_beams(locations, beamsfile)
     except Exception:
         messages.add_message(request, messages.ERROR, str("Core Exception"))
         return HttpResponse(status=500)          
@@ -70,18 +70,23 @@ def _get_bestbeam(request, locations):
 def convert_to_geojson(bestbeam):
     # The method expects a tuple like
     # (lat, lon, datetime, ???, altitude)
-    
-    if not bestbeam or len(bestbeam) != 5:
+
+    #for now is only one!!
+    beam = bestbeam[0]
+        
+    if not beam or len(beam) != 5:
         raise NoBestBeam("No Best beam found") 
+    
+
     
     ret = {}
     ret['type'] = "FeatureCollection"
     ret['features'] = []
     feat = ret['features']
 
-    feat.append(__satellite_feature(bestbeam[0], 
-                                   bestbeam[1], 
-                                   bestbeam[4]))
+    feat.append(__satellite_feature(beam[0], 
+                                   beam[1], 
+                                   beam[4]))
     return json.dumps(ret)
     
 def __satellite_feature(lat, lon, elevation):
