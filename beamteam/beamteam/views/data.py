@@ -40,16 +40,18 @@ import json
 import os
 
 def process(request):
-    locations = None
+    locations = None    
     if settings.DEMO:
         locations = os.path.join(settings.PROJECT_ROOT, 'tests', 'locations.txt')
         locations = open(locations, 'r').read()
     else:
         locations = get_customer_locations(request)
-
-    bestbeams = _get_bestbeam(request, locations)
-    bestbeams = convert_to_geojson(bestbeams)
-    context = {'bestbeams': bestbeams}
+        
+    context = {}    
+    if locations:
+        bestbeams = _get_bestbeam(request, locations)
+        bestbeams = convert_to_geojson(bestbeams)
+        context = {'bestbeams': bestbeams}
     return mm_render_to_response(request, 
                                  context, 
                                  'index.html')        
@@ -83,27 +85,30 @@ def convert_to_geojson(bestbeam):
     ret['type'] = "FeatureCollection"
     ret['features'] = []
     feat = ret['features']
-    feat['location'] = {"lat": beam[0], "lon": beam[1], "datetime": beam[2]}
+    location = {"lat": beam[0], "lon": beam[1], "datetime": beam[2]}
     subbeam = beam[3]
     beamid = "%s_%s_%s" % (subbeam[5], subbeam[1], subbeam[2])     
     feat.append(__satellite_feature(subbeam[3], 
                                    subbeam[4], 
                                    beam[4],
-                                   beamid))
+                                   beamid,
+                                   location))
     return json.dumps(ret)
     
-def __satellite_feature(lat, lon, elevation, beamid):
+def __satellite_feature(lat, lon, elevation, beamid, location):
     new_feature = {}    
     new_feature['type'] = "Feature"
     new_feature['geometry'] = {'type': "Point", "coordinates": [lat, lon]}
     new_feature['properties'] = {'elevation': elevation, 'beamid': beamid}
+    new_feature['location'] = location
     return new_feature
 
 def get_customer_locations(request):
     locations = ""
     try:
-        if hasattr(request, '_files'):
-            return request._files['uploadfiles'].read()
+        if hasattr(request, '_files') and hasattr(request._files, 'uploadfiles'):
+            return request._files['uploadfiles'].read()        
     except Exception:
         messages.add_message(request, messages.ERROR, str("No location file"))
-        raise NoLocations(str("No location file"))    
+        raise NoLocations(str("No location file"))
+    return None
