@@ -106,7 +106,7 @@ def __satellite_feature(lat, lon, elevation, beamid, location):
 def get_customer_locations(request):
     locations = ""
     try:
-        if hasattr(request, '_files') and hasattr(request._files, 'uploadfiles'):
+        if hasattr(request, '_files') and request._files.has_key('uploadfiles'):
             return request._files['uploadfiles'].read()        
     except Exception:
         messages.add_message(request, messages.ERROR, str("No location file"))
