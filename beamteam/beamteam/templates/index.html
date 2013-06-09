@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+
+
+
 <html>
   <head>
     <title>Simple Map</title>
@@ -21,9 +24,13 @@
     <script src="{{STATIC_URL}}js/jquery-ui-timepicker-addon.js"></script>
     <script src="{{STATIC_URL}}js/beamteam.js"></script>
     <script src="{{STATIC_URL}}js/GeoJSON.js"></script>
+    
   </head>
-  <body onload="boot()">
+  <!-- <body onload="boot()">  -->
+	<body>  
     <h1>beam-team</h1>
+    <form method="post" action="/data">
+    {% csrf_token %}
     <div id="leftpanel" style="display:inline-block;vertical-align:top;">
         <fieldset>
             <legend>Select lat/lon/date/time</legend>
@@ -32,10 +39,64 @@
             <br/>date:<input type="text" id="dt"></input>
             <br/>time:<input type="text" id="tm"></input>
             </br><button id="go">go</button>
+            
+        </fieldset>
+        <fieldset>
+        	<span class="btn btn-success fileinput-button">
+        		<i class="icon-plus icon-white"></i>
+        		<span>Upload File</span>
+        		<!-- The file input field used as target for the file upload widget -->
+        		<input id="fileupload" type="file" name="uploadfiles" multiple>
+        		<!-- The container for the uploaded files -->
+    			<div id="files" class="files"></div>
+    		</span>        
         </fieldset>
     </div>
+    <input type="submit"  name="submit" value="Submit">
+    </form>
     <div id="map-canvas" style="width:400px;height:400px;display:inline-block;">&nbsp;</div>
     <div id="leftpanel" style="width:200px;height:400px;;display:inline-block;">Controls2</div>
+
+
+<!-- The basic File Upload plugin -->
+<script src="{{STATIC_URL}}js/jquery.fileupload.js"></script>
+<script src="{{STATIC_URL}}js/jquery.cookie.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="{{STATIC_URL}}js/jquery.iframe-transport.js"></script>
+<script>
+/*jslint unparam: true */
+/*global window, $ */
+$(function () {
+    'use strict';
+    // Change this to the location of your server-side upload handler:
+    // Change this to the location of your server-side upload handler:
+    var url = (window.location.hostname === 'blueimp.github.com' ||
+                window.location.hostname === 'blueimp.github.io') ?
+                '//jquery-file-upload.appspot.com/' : '/data';
+    $('#fileupload').fileupload({
+    	type:'POST',
+        url: url,
+        dataType: '', 
+        done: function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo('#files');
+            });
+        },
+        headers: {        	
+            'X-CSRFToken': $.cookie('csrftoken')
+        },
+        submit: function (e, data) {
+            $.each(data.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo('#files');
+            });        	
+        	//var input = $('#files');        
+            //data.formData = {'example': input.val()};
+            return true
+        } 
+    });
+});
+</script>    
+
   </body>
 </html>
 

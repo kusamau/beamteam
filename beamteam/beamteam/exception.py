@@ -47,4 +47,13 @@ class NotExistingTLE(BTException):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return self.value  
+        return self.value
+    
+class NoLocations(BTException):
+    """
+        Whenever a user requires an unexcpeted parameter 
+    """    
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return self.value      

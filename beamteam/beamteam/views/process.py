@@ -30,7 +30,7 @@ Created on 28 May 2013
 
 @author: mnagni
 '''
-from beamteam.ds_registration_helper import mm_render_to_response
+from beamteam.teambeam_helper import mm_render_to_response
 
 def process_beam(request):
     context = {}

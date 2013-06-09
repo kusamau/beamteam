@@ -30,13 +30,27 @@ Created on 28 May 2013
 
 @author: mnagni
 '''
-from beamteam.teambeam_helper import mm_render_to_response
 from django.http.response import HttpResponse
 from django.conf import settings
 import os
+from beamteam.exception import NoLocations
+from django.contrib import messages
 
 def process(request):
+    locations = ""
+    try:
+        if hasattr(request, '_files'):
+            locations = request._files['uploadfiles']
+    except NoLocations:
+        messages.add_message(request, messages.ERROR, str("No location file"))
+        return HttpResponse(status=400)
+    
+    try:
+        #ret_json = get_beams(locations)
+        pass
+    except Exception:
+        messages.add_message(request, messages.ERROR, str("Core Exception"))
+        return HttpResponse(status=500)
     default_geojson = os.path.join(settings.PROJECT_ROOT, 'tests', 'example.geojson')
     ret_json = open(default_geojson, 'r')
     return HttpResponse(ret_json.read(), mimetype='application/json')    
-    
