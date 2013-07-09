@@ -50,7 +50,7 @@ def best_beams(coordinates, beamsfile):
     values = [line.split(',') for line in coordinates.split('\n')]
     values.pop(0)
 
-    return do_best_beams(values, beamsfile)
+    return do_best_beams(values, beamsfile, True)
 
 def do_best_beams(values, beamsfile, return_all = False):
     bests = []

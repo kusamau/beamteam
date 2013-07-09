@@ -21,7 +21,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 function parseGEOJSON(data) { 
     clearOutput();
-    var obj = JSON.parse(data);
+    var obj = data;
     var features = obj["features"];
     for(var i=0; i<features.length; i++) {
         var feature = features[i];

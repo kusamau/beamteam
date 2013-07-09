@@ -26,12 +26,14 @@
     
   </head>
   <body onload="boot()">
+  {{ bestbeams|safe }}
     <h1 style="display:inline;">beamhive</h1>&nbsp;&nbsp;<img src="static/img/logo_tiny.png"></img><br/>
     <div id="map-canvas" style="width:600px;height:600px;display:inline-block;">&nbsp;</div>
     <div  style="display:inline-block;vertical-align:top;"> 
-        <input type="hidden" id="bestbeams" value="{{ bestbeams }}" />
+
         
         <form method="post" action="/beam">
+        <input type="hidden" id="bestbeams" value="{{ bestbeams|safe }}" />
         {% csrf_token %}
         <div id="leftpanel_form" style="display:inline-block;vertical-align:top;">
             <!-- <fieldset>
@@ -92,7 +94,8 @@ $(function () {
             return true
         },
         done: function (e,data) {
-            parseGEOJSON(document.getElementById("bestbeams").value);
+        	alert(data.result);
+            parseGEOJSON(data.result);
         } 
     });
 });

@@ -52,6 +52,7 @@ def process(request):
         bestbeams = _get_bestbeam(request, locations)
         bestbeams = convert_to_geojson(bestbeams)
         context = {'bestbeams': bestbeams}
+        return HttpResponse(bestbeams, mimetype='application/json')        
     return mm_render_to_response(request, 
                                  context, 
                                  'index.html')        
@@ -74,25 +75,25 @@ def convert_to_geojson(bestbeam):
     # (lat, lon, datetime, ???, altitude)
 
     #for now is only one!!
-    beam = bestbeam[0]
-        
-    if not beam or len(beam) != 5:
-        raise NoBestBeam("No Best beam found") 
-    
+    configuration = bestbeam[0]
 
-    
     ret = {}    
     ret['type'] = "FeatureCollection"
     ret['features'] = []
-    feat = ret['features']
-    location = {"lat": beam[0], "lon": beam[1], "datetime": beam[2]}
-    subbeam = beam[3]
-    beamid = "%s_%s_%s" % (subbeam[5], subbeam[1], subbeam[2])     
-    feat.append(__satellite_feature(subbeam[3], 
-                                   subbeam[4], 
-                                   beam[4],
-                                   beamid,
-                                   location))
+    
+    for beam in configuration:        
+        if not beam or len(beam) != 5:
+            raise NoBestBeam("No Best beam found") 
+
+        feat = ret['features']
+        location = {"lat": beam[0], "lon": beam[1], "datetime": beam[2]}
+        subbeam = beam[3]
+        beamid = "%s_%s_%s" % (subbeam[5], subbeam[1], subbeam[2])     
+        feat.append(__satellite_feature(subbeam[3], 
+                                       subbeam[4], 
+                                       beam[4],
+                                       beamid,
+                                       location))
     return json.dumps(ret)
     
 def __satellite_feature(lat, lon, elevation, beamid, location):
@@ -107,7 +108,7 @@ def get_customer_locations(request):
     locations = ""
     try:
         if hasattr(request, '_files') and request._files.has_key('uploadfiles'):
-            return request._files['uploadfiles'].read()        
+            return request._files['uploadfiles'].read() 
     except Exception:
         messages.add_message(request, messages.ERROR, str("No location file"))
         raise NoLocations(str("No location file"))
