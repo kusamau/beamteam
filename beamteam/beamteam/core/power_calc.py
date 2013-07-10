@@ -1,6 +1,7 @@
 import sys
 import math
 from beamteam.core.beamparser import parse_beam_data
+import numpy
 sys.path.append(".")
 from beamteam.core.geoparser import *
 from beamteam.core.earth_ellipsoid import *
@@ -42,14 +43,17 @@ def db_beam_power_loss(S, e, f, hp_bw):
 # Calculates losses for all beams in array
 
 def db_beam_losses(cust_coords, sat_coords, beams, f, hp_bw):
+	"""
+		Appends to each beams the absolute_loss and the relative_loss 
+	"""
 	for b in beams:
 		beam_coords = coords_to_xyz(b[3], b[4])
-		S = xyz_distance(cust_coords, sat_coords)
-		cust_r = xyz_diff(cust_coords, sat_coords)
-		beam_r = xyz_diff(beam_coords, sat_coords)
+		S = numpy.linalg.norm(numpy.array(cust_coords)-numpy.array(sat_coords))
+		cust_r = numpy.subtract(cust_coords, sat_coords).tolist()
+		beam_r = numpy.subtract(beam_coords, sat_coords).tolist()
 		e = math.acos(scalar_prod(cust_r, beam_r)/(vec_mod(cust_r)*vec_mod(beam_r)))*180.0/math.pi
 		abs_loss = db_beam_power_loss(S, e, f, hp_bw)
-		S_b = xyz_distance(beam_coords, sat_coords)
+		S_b = numpy.linalg.norm(numpy.array(beam_coords)-numpy.array(sat_coords))
 		rel_loss = 10.0**((abs_loss-db_beam_power_loss(S_b, 0, f, hp_bw))/10.0)
 		b.append(abs_loss)
 		b.append(rel_loss)

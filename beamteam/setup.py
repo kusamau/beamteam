@@ -34,5 +34,6 @@ setup(
     # Adds dependencies    
     install_requires = ['django',
                         'pyephem',
-                        'pyproj'],
+                        'pyproj',
+                        'numpy'],
 )

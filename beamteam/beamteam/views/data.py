@@ -93,14 +93,17 @@ def convert_to_geojson(bestbeam):
                                        subbeam[4], 
                                        beam[4],
                                        beamid,
-                                       location))
+                                       location, 
+                                       subbeam[6],
+                                       subbeam[7]))
     return json.dumps(ret)
     
-def __satellite_feature(lat, lon, elevation, beamid, location):
+def __satellite_feature(lat, lon, elevation, beamid, location, abs_loss, rel_loss):
     new_feature = {}    
     new_feature['type'] = "Feature"
     new_feature['geometry'] = {'type': "Point", "coordinates": [lat, lon]}
-    new_feature['properties'] = {'elevation': elevation, 'beamid': beamid}
+    new_feature['properties'] = {'elevation': elevation, 'beamid': beamid, 
+                                 'abs_loss': abs_loss, 'rel_loss': rel_loss}
     new_feature['location'] = location
     return new_feature
 

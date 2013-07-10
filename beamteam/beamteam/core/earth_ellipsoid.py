@@ -14,11 +14,19 @@ LIGHT_C = 3e8 # meters/s
 # Simple Cartesian distance calculator
 
 def xyz_distance(r1, r2):
+	'''
+		Deprecated. Use:
+			numpy.subtract(coords_1, coords_2)
+	'''
 	return math.sqrt((r1[0]-r2[0])**2+(r1[1]-r2[1])**2+(r1[2]-r2[2])**2)
 
 # Vector diff
 
 def xyz_diff(r1, r2):
+	'''
+		Deprecated. Use:
+			numpy.linalg.norm(coords_1 - coords_2)
+	'''
 	return [r1[0]-r2[0], r1[1]-r2[1], r1[2]-r2[2]]
 
 # Vector module

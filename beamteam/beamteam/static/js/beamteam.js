@@ -35,7 +35,9 @@ function parseGEOJSON(data) {
         var satlon = geometry["coordinates"][1];
         var beamid = properties["beamid"];
         var elevation = properties["elevation"];
-        addOutput(lat,lon,dt,satlat,satlon,beamid,elevation);   
+        var abs_loss = properties["abs_loss"];
+        var rel_loss = properties["rel_loss"];
+        addOutput(lat,lon,dt,satlat,satlon,beamid,elevation,abs_loss,rel_loss);   
     }
 }
 
@@ -72,7 +74,18 @@ function satellitePosition(lat,lon,beamid) {
 
 function clearOutput() {
     output = {};
-    table.innerHTML = '<tr><td>show</td><td>lat</td><td>lon</td><td>dt</td><td>satlat</td><td>satlon</td><td>beamid</td><td>elevation</td></tr>';
+    table.innerHTML = "<tr>" +
+    		"<td>show</td>" +
+    		"<td>lat</td>" +
+    		"<td>lon</td>" +
+    		"<td>dt</td>" +
+    		"<td>satlat</td>" +
+    		"<td>satlon</td>" +
+    		"<td>beamid</td>" +
+    		"<td>elevation</td>" +
+    		"<td>abs_loss</td>" +
+    		"<td>rel_loss</td>" +
+    		"</tr>";
 }
 
 function makeTD(val) {
@@ -83,10 +96,18 @@ function makeTDF(val) {
     return "<td>"+String(parseFloat(Math.round(val * 100) / 100).toFixed(2)) + "</td>";
 }
 
-function addOutput(lat,lon,dt,satlat,satlon,beamid,elevation) {
+function addOutput(lat,lon,dt,satlat,satlon,beamid,elevation,rel_loss,abs_loss) {
     var rowid = "row_"+output_count;
     output_count += 1;
-    output[rowid] = { "beamid":beamid, "lat":lat, "lon":lon, "dt":dt, "satlat":satlat, "satlon":satlon, "elevation":elevation };
+    output[rowid] = { "beamid":beamid, 
+    		"lat":lat, 
+    		"lon":lon, 
+    		"dt":dt, 
+    		"satlat":satlat, 
+    		"satlon":satlon, 
+    		"elevation":elevation,
+    		"rel_loss":rel_loss,
+    		"abs_loss":abs_loss};
 
     var row = document.createElement("tr");
     rh = '<td><button id="'+rowid+'">Show</button></td>';
@@ -97,6 +118,8 @@ function addOutput(lat,lon,dt,satlat,satlon,beamid,elevation) {
     rh += makeTDF(satlon);
     rh += makeTD(beamid);
     rh += makeTDF(elevation);
+    rh += makeTDF(abs_loss);
+    rh += makeTDF(rel_loss);
     row.innerHTML = rh;    
     table.appendChild(row);
     document.getElementById(rowid).onclick = function(ev) { 
